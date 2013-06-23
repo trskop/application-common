@@ -1,0 +1,46 @@
+name:                   application-common
+version:                0.1.0.0
+synopsis:               Abstract way of building applications.
+description:
+  Abstract way of building applications that have multiple modes of operation
+  and configuration passed on command line and/or using configuration files.
+-- homepage:
+license:                BSD3
+license-file:           LICENSE
+author:                 Peter Trsko
+maintainer:             peter.trsko@gmail.com
+copyright:              (c) 2013 Peter Trško
+category:               Development
+build-type:             Simple
+cabal-version:          >=1.10
+
+extra-source-files:
+    README.md
+
+flag pedantic
+  description:
+    Pass additional flags, including -Werror, to GHC during compilation.
+  default: False
+
+library
+  default-language:     Haskell2010
+  hs-source-dirs:       src
+  exposed-modules:
+      Main.ApplicationMode
+    , Main.ApplicationMode.Class
+    , System.Console.GetOpt.UsageInfo
+  -- other-modules:
+  build-depends:
+      base >= 4.5 && < 4.7
+    , data-default-class == 0.0.*
+    , comonad == 3.0.*
+    , not-found >= 0.7.0.0
+    , pretty == 1.1.*
+    , semigroups >= 0.8 && < 1
+    , terminal-size == 0.2.*
+
+  ghc-options:          -Wall
+  if impl(ghc >= 6.8)
+    ghc-options:        -fwarn-tabs
+  if flag(pedantic)
+    ghc-options:        -Werror
