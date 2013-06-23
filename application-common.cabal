@@ -4,7 +4,7 @@ synopsis:               Abstract way of building applications.
 description:
   Abstract way of building applications that have multiple modes of operation
   and configuration passed on command line and/or using configuration files.
--- homepage:
+homepage:               https://github.com/trskop/application-common
 license:                BSD3
 license-file:           LICENSE
 author:                 Peter Trsko
@@ -44,3 +44,7 @@ library
     ghc-options:        -fwarn-tabs
   if flag(pedantic)
     ghc-options:        -Werror
+
+source-repository head
+  type:                 git
+  location:             git://github.com/trskop/application-common.git
