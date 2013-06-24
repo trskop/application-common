@@ -1,5 +1,5 @@
 name:                   application-common
-version:                0.1.0.1
+version:                0.1.1.0
 synopsis:               Abstract way of building applications.
 description:
   Abstract way of building applications that have multiple modes of operation
@@ -32,6 +32,7 @@ library
   exposed-modules:
       Main.ApplicationMode
     , Main.ApplicationMode.Class
+    , Main.ApplicationMode.SimpleAction
     , System.Console.GetOpt.UsageInfo
   -- other-modules:
   build-depends:
