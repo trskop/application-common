@@ -17,15 +17,27 @@ module Main.ApplicationMode.Class
     (
     -- * ApplicationMode
       ApplicationMode(..)
+
+    -- ** Operations on Action
+    , getAction
+    , changeAction
+    , setAction
+
+    -- ** Operations on Configuration
+    , getConfiguration
     , updateConfiguration
     , updateConfiguration'
-    , changeAction
-    , getConfiguration
-    , getAction
-    , runApplication
+    , setConfiguration
+
+    -- ** Combinators
     , whenAction
+
+    -- ** Run/evaluate Application Mode
+    , runApplication
     )
     where
+
+-- {{{ Imports ----------------------------------------------------------------
 
 import Control.Applicative (Applicative(..))
 import Control.Arrow (Arrow((&&&)), (>>>))
@@ -36,8 +48,10 @@ import Data.Maybe (fromMaybe)
 import Data.Monoid (Endo(..))
 import Control.Comonad (Comonad(..))
 
+-- }}} Imports ----------------------------------------------------------------
 
--- {{{ ApplicationMode --------------------------------------------------------
+
+-- {{{ Class ApplicationMode --------------------------------------------------
 
 -- | While this might look complex at first, it turns out quite simple to
 -- actually define what application does and also understand it later on. The
@@ -56,7 +70,7 @@ import Control.Comonad (Comonad(..))
 -- * Action has to be instance of 'Semigroup'. This defines transitions between
 --   actions and if there is any information shared between different actions.
 --   E.g. for action that handles command line argument errors it might join
---   error messages. So how action changes is defined only on one place and
+--   error messages. So, how action changes is defined only in one place and
 --   it's done in a way that doesn't rely on current value of configuration.
 --
 -- * Functor instances allow usage of 'fmap' and 'flipmap' to modify
@@ -87,13 +101,35 @@ class
     optError :: String -> Endo (f a c)
     optError msg = optErrors [msg]
 
--- | Modify configuration wrapped in application mode.
-updateConfiguration :: ApplicationMode f a c => (c -> c) -> Endo (f a c)
-updateConfiguration = Endo . fmap
+-- }}} Class ApplicationMode --------------------------------------------------
+
+-- {{{ Action -----------------------------------------------------------------
+
+-- | Extract action from application mode.
+getAction :: ApplicationMode f a c => f a c -> a
+getAction = extract . FlipT
 
 -- | Change action wrapped in application mode, using its 'Semigroup' instance.
 changeAction :: ApplicationMode f a c => a -> Endo (f a c)
 changeAction a = Endo $ flipmap (<> a)
+
+-- | Set action and discard the old one.
+--
+-- Introduced in version @0.2.1.0@.
+setAction :: ApplicationMode f a c => a -> Endo (f a c)
+setAction = Endo . flipmap . const
+
+-- }}} Action -----------------------------------------------------------------
+
+-- {{{ Configuration ----------------------------------------------------------
+
+-- | Extract configuration from application mode.
+getConfiguration :: ApplicationMode f a c => f a c -> c
+getConfiguration = extract
+
+-- | Modify configuration wrapped in application mode.
+updateConfiguration :: ApplicationMode f a c => (c -> c) -> Endo (f a c)
+updateConfiguration = Endo . fmap
 
 -- | Similar to 'updateConfiguration', but function that does the update will
 -- get action as an argument as well as configuration.
@@ -101,13 +137,15 @@ updateConfiguration' :: ApplicationMode f a c => (a -> c -> c) -> Endo (f a c)
 updateConfiguration' f =
     Endo . extend $ getAction &&& getConfiguration >>> uncurry f
 
--- | Extract configuration from application mode.
-getConfiguration :: ApplicationMode f a c => f a c -> c
-getConfiguration = extract
+-- | Set configuration and discard the old one.
+--
+-- Introduced in version @0.2.1.0@.
+setConfiguration :: ApplicationMode f a c => c -> Endo (f a c)
+setConfiguration = updateConfiguration . const
 
--- | Extract action from application mode.
-getAction :: ApplicationMode f a c => f a c -> a
-getAction = extract . FlipT
+-- }}} Configuration ----------------------------------------------------------
+
+-- {{{ Combinators ------------------------------------------------------------
 
 -- | If predicate holds return endomorphism passed as second argument,
 -- otherwise return 'mempty'.  Similar to @Control.Monad.when@.
@@ -122,6 +160,10 @@ whenAction
     -- argument holds.
     -> Endo (f a c)
 whenAction p (Endo f) = Endo $ \ am -> if p $ getAction am then f am else am
+
+-- }}} Combinators ------------------------------------------------------------
+
+-- {{{ Evaluate ---------------------------------------------------------------
 
 -- | Runs @'Endo' (f a c)@ with default values and passes action and
 -- configuration to the function passed as a first argument. If you want to
@@ -142,4 +184,4 @@ runApplication endo f g = uncurry f defMode >>= uncurry g . fromMaybe defMode
   where
     defMode = getAction &&& getConfiguration $ appEndo endo def
 
--- }}} ApplicationMode --------------------------------------------------------
+-- }}} Evaluate ---------------------------------------------------------------
