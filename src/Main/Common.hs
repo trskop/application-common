@@ -114,7 +114,7 @@ printHelp params cfg mkHelp = do
     hPutStrLn handle . unlines $ map (("  " ++ command ++ " ") ++) usage
     hPutStr handle $ mkHelp progName command
     unless (null footer)
-        . hPutStr handle . unlines $ "" : footer
+        . hPutStr handle . unlines $ "" : "" : footer
   where
     get f = f params cfg
     progName = get paramProgName
