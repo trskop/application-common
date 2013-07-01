@@ -24,10 +24,16 @@ import Data.Maybe (fromMaybe)
 import System.Console.GetOpt (ArgDescr(..), OptDescr(..))
 
 import qualified System.Console.Terminal.Size as Terminal (Window(width), size)
-
 import Text.PrettyPrint.HughesPJ
 
 
+-- | Render usage information, produced by 'usageInfo', using terminal width
+-- as line length. If output is not a terminal, then 80 character width lines
+-- are used.
+--
+-- Unfortunately this approach works only for @stdout@, but not @stderr@. It's
+-- a limitation of /terminal-size/ library
+-- <http://hackage.haskell.org/package/terminal-size>.
 renderUsageInfo :: String -> [OptDescr a] -> IO String
 renderUsageInfo header opts = do
     terminalWidth <- fmap Terminal.width <$> Terminal.size
@@ -51,12 +57,18 @@ formatOption (Option short long argDescr descStr) =
         ++ map (formatLongOption argDescr) long
     descDoc = fsep . map text $ words descStr
 
+-- | Format short option:
+--
+-- > '-' <option> (<space> (<required-argument>|'[' <optional-argument> ']'))?
 formatShortOption :: ArgDescr a -> Char -> Doc
 formatShortOption argDescr opt = char '-' <> char opt <+> case argDescr of
     NoArg _ -> empty
     OptArg _ s -> brackets $ text s
     ReqArg _ s -> text s
 
+-- | Format long option:
+--
+-- > "--" <option> ('=' (<required-argument>|'[' <optional-argument> ']'))?
 formatLongOption :: ArgDescr a -> String -> Doc
 formatLongOption argDescr opt = text "--" <> text opt <> case argDescr of
     NoArg _ -> empty
