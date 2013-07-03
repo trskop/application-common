@@ -10,8 +10,13 @@
 --
 -- Alternative to System.Console.GetOpt.usageInfo.
 module System.Console.GetOpt.UsageInfo
-    ( renderUsageInfo
-    , usageInfo
+    (
+    -- * Render usage info
+      UsageInfoConfig(..)
+    , renderUsageInfo
+
+    -- * Format usage info in to Doc
+    , formatUsageInfo
     , formatOptions
     , formatOption
     , formatShortOption
@@ -56,8 +61,8 @@ renderUsageInfo cfg header opts = do
   where
     getLineLength = fromMaybe (defaultLineLength cfg)
 
-usageInfo :: String -> [OptDescr a] -> Doc
-usageInfo header opts = (fsep . map text $ words header) $+$ text ""
+formatUsageInfo :: String -> [OptDescr a] -> Doc
+formatUsageInfo header opts = (fsep . map text $ words header) $+$ text ""
     $+$ formatOptions opts
 
 formatOptions :: [OptDescr a] -> Doc
