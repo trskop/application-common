@@ -7,10 +7,13 @@
 -- Maintainer:   peter.trsko@gmail.com
 --
 -- Tests for module @Main.ApplicationMode@.
-module TestCase.Main.ApplicationMode (tests)
+module TestCase.Main.ApplicationMode.SimpleMode (tests)
     where
 
-import Data.Default.Class (def)
+import Control.Comonad (Comonad(..))
+import Data.Default.Class (Default(def))
+import Data.Default.Instances.Base ()
+import Data.Functor.FlipT (FlipT(..), flipmap)
 import Test.Framework (Test, testGroup)
 import Test.Framework.Providers.HUnit (testCase)
 --import Test.Framework.Providers.QuickCheck2 (testProperty)
@@ -39,24 +42,42 @@ tests =
 
 test_AppModeDefaultInstance :: [Test]
 test_AppModeDefaultInstance =
-    [ testCase "def :: AppMode () ()"
-        ((), ()) @=? fromAppMode def
+    [ testCase "def :: SimpleMode () ()"
+        $ (def :: (), def :: ()) @=? fromSimpleMode def
+    , testCase "def :: SimpleMode [Int] [Int]"
+        $ (def :: [Int], def :: [Int]) @=? fromSimpleMode def
     ]
 
 test_AppModeFunctorInstance :: [Test]
-test_AppModeFunctorInstance = []
+test_AppModeFunctorInstance =
+    [ testCase "(+1) `fmap` SimpleMode ((), 41 :: Int)) = ((), 42)"
+        $ ((), 42 :: Int) @=? fromSimpleMode ((+1) `fmap` SimpleMode ((), 41))
+    ]
 
 test_FlipTAppModeFunctorInstance :: [Test]
-test_FlipTAppModeFunctorInstance = []
+test_FlipTAppModeFunctorInstance =
+    [ testCase "(+1) `flipmap` SimpleMode (1 :: Int, ())) = (2, ())"
+        $ (2 :: Int, ()) @=? fromSimpleMode ((+1) `flipmap` SimpleMode (1, ()))
+    ]
 
 test_AppModeApplicativeInstance :: [Test]
 test_AppModeApplicativeInstance = []
 
 test_AppModeComonadInstance :: [Test]
-test_AppModeComonadInstance = []
+test_AppModeComonadInstance =
+    [ testCase "extract (SimpleMode (42 :: Int, ())) = ()"
+        $ () @=? extract (SimpleMode (42 :: Int, ()))
+    , testCase "extract (SimpleMode ((), 42 :: Int)) = 42"
+        $ 42 @=? extract (SimpleMode ((), 42 :: Int))
+    ]
 
 test_FlipTAppModeComonadInstance :: [Test]
-test_FlipTAppModeComonadInstance = []
+test_FlipTAppModeComonadInstance =
+    [ testCase "extract (FlipT (SimpleMode (42 :: Int, ()))) = 42"
+        $ 42 @=? extract (FlipT (SimpleMode (42 :: Int, ())))
+    , testCase "extract (FlipT (SimpleMode ((), 42 :: Int))) = ()"
+        $ () @=? extract (FlipT (SimpleMode ((), 42 :: Int)))
+    ]
 
 test_AppModeMonadInstance :: [Test]
 test_AppModeMonadInstance = []

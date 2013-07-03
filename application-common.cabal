@@ -52,6 +52,53 @@ library
   if flag(pedantic)
     ghc-options:        -Werror
 
+test-suite application-common-unit-tests
+  hs-source-dirs:       src, test
+  type:                 exitcode-stdio-1.0
+  main-is:              unit-tests-main.hs
+  other-modules:
+      Main.ApplicationMode
+    , Main.ApplicationMode.Class
+    , Main.ApplicationMode.SimpleAction
+    , Main.ApplicationMode.SimpleMode
+    , Main.Common
+    , System.Console.GetOpt.UsageInfo
+
+  build-depends:
+      base >= 4.5 && < 4.7
+
+    , data-default-class == 0.0.*
+    , data-default-instances-base == 0.0.*
+    , comonad == 3.0.*
+    , not-found >= 0.7.0.0
+    , pretty == 1.1.*
+    , semigroups >= 0.8 && < 1
+    , terminal-size >= 0.2.1.0 && < 0.3
+
+    -- Test dependencies:
+    , HUnit >= 1.2 && < 2
+      -- ^ Same constraints as test-framework-hunit
+    , QuickCheck >= 2.4 && < 2.6
+      -- ^ Same constraints as test-framework-quickcheck2
+    , test-framework >= 0.8 && < 1
+      -- ^ Same constraint as test-framework-skip, other packages that
+      -- depend on it have less restrictive bounds.
+    , test-framework-hunit >= 0.2.6
+      -- ^ Lower versions have more restrictive bounds on test-framework.
+    , test-framework-quickcheck2 >= 0.3
+      -- ^ There were changes in QuickCheck bounds in 0.2 branch and last one
+      -- on it had a compilation failure on Hackage.
+
+      -- Not required right now:
+    -- , test-framework-skip == 1.*
+      -- ^ Currently there is only version 1.0.
+
+  ghc-options:          -Wall
+  if impl(ghc >= 6.8)
+    ghc-options:        -fwarn-tabs
+  if flag(pedantic)
+    ghc-options:        -Werror
+
 source-repository head
   type:                 git
   location:             git://github.com/trskop/application-common.git
