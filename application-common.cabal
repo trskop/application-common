@@ -1,5 +1,5 @@
 name:                   application-common
-version:                0.2.1.2
+version:                0.3.0.0
 synopsis:               Abstract way of building applications.
 description:
   Abstract way of building applications that have multiple modes of operation
@@ -43,7 +43,7 @@ library
     , not-found >= 0.7.0.0
     , pretty == 1.1.*
     , semigroups >= 0.8 && < 1
-    , terminal-size == 0.2.*
+    , terminal-size >= 0.2.1.0 && < 0.3
 
   ghc-options:          -Wall
   if impl(ghc >= 6.8)

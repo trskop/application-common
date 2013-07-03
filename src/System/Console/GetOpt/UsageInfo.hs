@@ -22,23 +22,39 @@ module System.Console.GetOpt.UsageInfo
 import Control.Applicative ((<$>))
 import Data.Maybe (fromMaybe)
 import System.Console.GetOpt (ArgDescr(..), OptDescr(..))
+import System.IO (Handle, stdout)
 
-import qualified System.Console.Terminal.Size as Terminal (Window(width), size)
+import Data.Default.Class (Default(def))
+import qualified System.Console.Terminal.Size
+    as Terminal (Window(width), hSize)
 import Text.PrettyPrint.HughesPJ
 
 
--- | Render usage information, produced by 'usageInfo', using terminal width
--- as line length. If output is not a terminal, then 80 character width lines
--- are used.
---
--- Unfortunately this approach works only for @stdout@, but not @stderr@. It's
--- a limitation of /terminal-size/ library
--- <http://hackage.haskell.org/package/terminal-size>.
-renderUsageInfo :: String -> [OptDescr a] -> IO String
-renderUsageInfo header opts = do
-    terminalWidth <- fmap Terminal.width <$> Terminal.size
-    return . renderStyle style{lineLength = fromMaybe 80 terminalWidth}
+-- | Parameters for 'renderUsageInfo'.
+data UsageInfoConfig = UsageInfoConfig
+    { defaultLineLength :: Int
+    -- ^ Line length used when output handle is not a terminal.
+    , outputHandle :: Handle
+    -- ^ Output handle to use for getting terminal size. Usage info is not
+    -- written to it.
+    }
+
+instance Default UsageInfoConfig where
+    def = UsageInfoConfig
+        { defaultLineLength = 80
+        , outputHandle = stdout
+        }
+
+-- | Render usage information, produced by 'usageInfo', using terminal width as
+-- line length. If 'outputHandle' is not a terminal, then 'defaultLineLength'
+-- is used.
+renderUsageInfo :: UsageInfoConfig -> String -> [OptDescr a] -> IO String
+renderUsageInfo cfg header opts = do
+    terminalWidth <- fmap Terminal.width <$> Terminal.hSize (outputHandle cfg)
+    return . renderStyle style{lineLength = getLineLength terminalWidth}
         $ usageInfo header opts
+  where
+    getLineLength = fromMaybe (defaultLineLength cfg)
 
 usageInfo :: String -> [OptDescr a] -> Doc
 usageInfo header opts = (fsep . map text $ words header) $+$ text ""
