@@ -57,7 +57,7 @@ renderUsageInfo :: UsageInfoConfig -> String -> [OptDescr a] -> IO String
 renderUsageInfo cfg header opts = do
     terminalWidth <- fmap Terminal.width <$> Terminal.hSize (outputHandle cfg)
     return . renderStyle style{lineLength = getLineLength terminalWidth}
-        $ usageInfo header opts
+        $ formatUsageInfo header opts
   where
     getLineLength = fromMaybe (defaultLineLength cfg)
 
