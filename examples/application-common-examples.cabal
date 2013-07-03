@@ -1,5 +1,5 @@
 name:                   application-common-examples
-version:                0.3.0.0
+version:                0.4.0.0
 synopsis:               Abstract way of building applications.
 description:
   Abstract way of building applications that have multiple modes of operation
@@ -28,7 +28,7 @@ executable hello-world
   hs-source-dirs:       src
   build-depends:
       base >= 4.5 && < 4.7
-    , application-common == 0.3.0.0
+    , application-common == 0.3.0.0 || == 0.4.0.0
     -- ^ In version 0.3.0.0 SimpleMode was introduced and renderUsageInfo
     -- changed it's type.
     , data-default-class == 0.0.*
@@ -47,7 +47,7 @@ executable hello-world-simple
   hs-source-dirs:       src
   build-depends:
       base >= 4.5 && < 4.7
-    , application-common == 0.3.0.0
+    , application-common == 0.3.0.0 || == 0.4.0.0
     -- ^ In version 0.3.0.0 SimpleMode was introduced and renderUsageInfo
     -- changed it's type.
     , data-default-class == 0.0.*
