@@ -31,7 +31,7 @@ import Data.Default.Class (Default(def))
 import Data.Semigroup (Semigroup(..))
 import Main.ApplicationMode
     ( ApplicationMode(..)
-    , AppMode(..)
+    , SimpleMode(..)
     , changeAction
     , runApplication
     , updateConfiguration
@@ -41,7 +41,7 @@ import System.Console.GetOpt.UsageInfo (renderUsageInfo)
 import Paths_application_common_examples (version)
 
 
-type HelloWorldMode = AppMode Action Config
+type HelloWorldMode = SimpleMode Action Config
 
 data Action
     = OptErrors [String]
@@ -64,7 +64,7 @@ data Config = Config {allUpperCase :: Bool, outHandle :: Handle}
 instance Default Config where
     def = Config False stdout
 
-instance ApplicationMode AppMode Action Config where
+instance ApplicationMode SimpleMode Action Config where
     optErrors [] = mempty
     optErrors msgs = changeAction (OptErrors $ map (takeWhile notEol) msgs)
         `mappend` updateConfiguration (\ c -> c{outHandle = stderr})

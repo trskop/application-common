@@ -33,6 +33,7 @@ library
       Main.ApplicationMode
     , Main.ApplicationMode.Class
     , Main.ApplicationMode.SimpleAction
+    , Main.ApplicationMode.SimpleMode
     , Main.Common
     , System.Console.GetOpt.UsageInfo
   -- other-modules:

@@ -32,30 +32,30 @@ import System.IO (Handle, hPutStr, hPutStrLn, stdout, stderr)
 import Data.Default.Class (Default(def))
 import Main.ApplicationMode
     ( ApplicationMode(..)
-    , AppMode(..)
+    , SimpleMode(..)
     , changeAction
     , runApplication
     , updateConfiguration
     )
 import Main.ApplicationMode.SimpleAction (SimpleAction(..))
+import qualified Main.ApplicationMode.SimpleAction as SimpleAction (optErrors)
 import System.Console.GetOpt.UsageInfo (renderUsageInfo)
 
 import Paths_application_common_examples (version)
 
 
-type HelloWorldMode = AppMode SimpleAction Config
+type HelloWorldMode = SimpleMode SimpleAction Config
 
 data Config = Config {allUpperCase :: Bool, outHandle :: Handle}
 
 instance Default Config where
     def = Config False stdout
 
-instance ApplicationMode AppMode SimpleAction Config where
-    optErrors [] = mempty
-    optErrors msgs = changeAction (OptErrors $ map (takeWhile notEol) msgs)
-        `mappend` updateConfiguration (\ c -> c{outHandle = stderr})
-      where
-        notEol ch = ch /= '\r' && ch /= '\n'
+instance ApplicationMode SimpleMode SimpleAction Config where
+    optErrors = case SimpleAction.optErrors msgs of
+        Nothing -> mempty
+        Just a -> changeAction a
+            `mappend` updateConfiguration (\ c -> c{outHandle = stderr})
 
 options :: [OptDescr (Endo HelloWorldMode)]
 options =
