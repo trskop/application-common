@@ -44,8 +44,7 @@ import Control.Arrow (Arrow((&&&)), (>>>))
 import Data.Default.Class (Default(def))
 import Data.Functor.FlipT (FlipT(..), flipmap)
 import Data.Semigroup (Semigroup(..))
-import Data.Maybe (fromMaybe)
-import Data.Monoid (Endo(..))
+import Data.Monoid (Endo(..), Monoid(mappend))
 import Control.Comonad (Comonad(..))
 
 -- }}} Imports ----------------------------------------------------------------
@@ -180,8 +179,12 @@ runApplication
     -> (a -> c -> m (Maybe (a, c)))
     -> (a -> c -> m r)
     -> m r
-runApplication endo f g = uncurry f defMode >>= uncurry g . fromMaybe defMode
+runApplication endo f g =
+    uncurry f defMode >>= uncurry g . maybe defMode mkNewDefMode
   where
-    defMode = getAction &&& getConfiguration $ appEndo endo def
+    getBoth = getAction &&& getConfiguration
+    defMode = getBoth $ appEndo endo def
+    mkNewDefMode (a, c) = getBoth
+        $ appEndo (setAction a `mappend` setConfiguration c `mappend` endo) def
 
 -- }}} Evaluate ---------------------------------------------------------------
