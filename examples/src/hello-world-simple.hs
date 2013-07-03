@@ -39,7 +39,10 @@ import Main.ApplicationMode
     )
 import Main.ApplicationMode.SimpleAction (SimpleAction(..))
 import qualified Main.ApplicationMode.SimpleAction as SimpleAction (optErrors)
-import System.Console.GetOpt.UsageInfo (renderUsageInfo)
+import System.Console.GetOpt.UsageInfo
+    ( UsageInfoConfig(outputHandle)
+    , renderUsageInfo
+    )
 
 import Paths_application_common_examples (version)
 
@@ -52,7 +55,7 @@ instance Default Config where
     def = Config False stdout
 
 instance ApplicationMode SimpleMode SimpleAction Config where
-    optErrors = case SimpleAction.optErrors msgs of
+    optErrors msgs = case SimpleAction.optErrors msgs of
         Nothing -> mempty
         Just a -> changeAction a
             `mappend` updateConfiguration (\ c -> c{outHandle = stderr})
@@ -101,4 +104,4 @@ main = do
     printHelp h = do
         progName <- getProgName
         hPutStr h $ unlines ["Usage:", "", "  " ++ progName ++ " [OPTIONS]"]
-        renderUsageInfo "" options >>= hPutStrLn h
+        renderUsageInfo def{outputHandle = h} "" options >>= hPutStrLn h

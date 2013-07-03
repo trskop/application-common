@@ -36,7 +36,10 @@ import Main.ApplicationMode
     , runApplication
     , updateConfiguration
     )
-import System.Console.GetOpt.UsageInfo (renderUsageInfo)
+import System.Console.GetOpt.UsageInfo
+    ( UsageInfoConfig(outputHandle)
+    , renderUsageInfo
+    )
 
 import Paths_application_common_examples (version)
 
@@ -109,4 +112,4 @@ main = do
     printHelp h = do
         progName <- getProgName
         hPutStr h $ unlines ["Usage:", "", "  " ++ progName ++ " [OPTIONS]"]
-        renderUsageInfo "" options >>= hPutStrLn h
+        renderUsageInfo def{outputHandle = h} "" options >>= hPutStrLn h
