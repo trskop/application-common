@@ -64,6 +64,10 @@ test-suite application-common-unit-tests
     , Main.Common
     , System.Console.GetOpt.UsageInfo
 
+    , TestCase
+    , TestCase.Main.ApplicationMode.SimpleAction
+    , TestCase.Main.ApplicationMode.SimpleMode
+
   build-depends:
       base >= 4.5 && < 4.7
 
