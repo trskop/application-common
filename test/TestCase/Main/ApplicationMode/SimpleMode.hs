@@ -19,7 +19,7 @@ import Test.Framework.Providers.HUnit (testCase)
 --import Test.Framework.Providers.QuickCheck2 (testProperty)
 import Test.HUnit ((@=?))
 
-import Main.ApplicationMode
+import Main.ApplicationMode.SimpleMode
 
 
 tests :: [Test]

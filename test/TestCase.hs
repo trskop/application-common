@@ -14,10 +14,13 @@ module TestCase (tests)
 
 import Test.Framework (Test, testGroup)
 
+import qualified TestCase.Main.ApplicationMode.SimpleAction
+    as SimpleAction (tests)
 import qualified TestCase.Main.ApplicationMode.SimpleMode as SimpleMode (tests)
 
 
 tests :: [Test]
 tests =
-    [ testGroup "Main.SimpleMode" SimpleMode.tests
+    [ testGroup "Main.SimpleAction" SimpleAction.tests
+    , testGroup "Main.SimpleMode" SimpleMode.tests
     ]

@@ -43,6 +43,15 @@ data SimpleAction
     -- | List of errors that occurred while processing command line arguments.
     deriving (Data, Show, Typeable)
 
+-- | Arguments to data constructors are ignored. It's useful to determine in
+-- which mode of operation we are.
+instance Eq SimpleAction where
+    PrintVersion _ == PrintVersion _ = True
+    PrintHelp      == PrintHelp      = True
+    Action         == Action         = True
+    OptErrors _    == OptErrors _    = True
+    _              == _              = False
+
 instance Default SimpleAction where
     def = Action
 
@@ -51,8 +60,12 @@ instance Semigroup SimpleAction where
         OptErrors es1 -> case y of
             OptErrors es2 -> OptErrors $ es1 ++ es2
             _ -> x
-        PrintVersion _ -> x
-        PrintHelp -> x
+        PrintVersion _ -> case y of
+            OptErrors _ -> y
+            _ -> x
+        PrintHelp -> case y of
+            OptErrors _ -> y
+            _ -> x
         Action -> y
 
 -- | Wrapper around 'OptErrors' data constructor.
