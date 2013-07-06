@@ -47,21 +47,25 @@ test_AppModeDefaultInstance =
     , testCase "def :: SimpleMode [Int] [Int]"
         $ (def :: [Int], def :: [Int]) @=? fromSimpleMode def
     ]
+{-# ANN test_AppModeDefaultInstance "HLint: ignore Use camelCase" #-}
 
 test_AppModeFunctorInstance :: [Test]
 test_AppModeFunctorInstance =
     [ testCase "(+1) `fmap` SimpleMode ((), 41 :: Int)) = ((), 42)"
         $ ((), 42 :: Int) @=? fromSimpleMode ((+1) `fmap` SimpleMode ((), 41))
     ]
+{-# ANN test_AppModeFunctorInstance "HLint: ignore Use camelCase" #-}
 
 test_FlipTAppModeFunctorInstance :: [Test]
 test_FlipTAppModeFunctorInstance =
     [ testCase "(+1) `flipmap` SimpleMode (1 :: Int, ())) = (2, ())"
         $ (2 :: Int, ()) @=? fromSimpleMode ((+1) `flipmap` SimpleMode (1, ()))
     ]
+{-# ANN test_FlipTAppModeFunctorInstance "HLint: ignore Use camelCase" #-}
 
 test_AppModeApplicativeInstance :: [Test]
 test_AppModeApplicativeInstance = []
+{-# ANN test_AppModeApplicativeInstance "HLint: ignore Use camelCase" #-}
 
 test_AppModeComonadInstance :: [Test]
 test_AppModeComonadInstance =
@@ -70,6 +74,7 @@ test_AppModeComonadInstance =
     , testCase "extract (SimpleMode ((), 42 :: Int)) = 42"
         $ 42 @=? extract (SimpleMode ((), 42 :: Int))
     ]
+{-# ANN test_AppModeComonadInstance "HLint: ignore Use camelCase" #-}
 
 test_FlipTAppModeComonadInstance :: [Test]
 test_FlipTAppModeComonadInstance =
@@ -78,6 +83,8 @@ test_FlipTAppModeComonadInstance =
     , testCase "extract (FlipT (SimpleMode ((), 42 :: Int))) = ()"
         $ () @=? extract (FlipT (SimpleMode ((), 42 :: Int)))
     ]
+{-# ANN test_FlipTAppModeComonadInstance "HLint: ignore Use camelCase" #-}
 
 test_AppModeMonadInstance :: [Test]
 test_AppModeMonadInstance = []
+{-# ANN test_AppModeMonadInstance "HLint: ignore Use camelCase" #-}

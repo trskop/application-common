@@ -26,11 +26,11 @@ tests =
     [ testCase "instance Default SimpleAction"
         . assertBool "Expected default value to be Action." $ isAction def
     , testGroup "instance Eq SimpleAction"
-        $ test_EqSimpleActionInstance
+        test_EqSimpleActionInstance
     , testGroup "instance Semigroup SimpleAction"
-        $ test_SemigroupSimpleActionInstance
+        test_SemigroupSimpleActionInstance
     , testGroup "optErrors"
-        $ test_optErrors
+        test_optErrors
     ]
   where
     isAction Action = True
@@ -54,6 +54,7 @@ test_EqSimpleActionInstance =
     testInequal x y = testCase (show x ++ " /= " ++ show y)
         . assertBool (msg x y "inequal") $ x /= y
     msg x y str = concat ["Expected ", show x, " to be ", str, " to ", show y]
+{-# ANN test_EqSimpleActionInstance "HLint: ignore Use camelCase" #-}
 
 test_SemigroupSimpleActionInstance :: [Test]
 test_SemigroupSimpleActionInstance =
@@ -111,6 +112,8 @@ test_SemigroupSimpleActionInstance =
     expectPrintVersion = expect PrintVersion $ \ b x -> case x of
         PrintVersion b' -> b == b'
         _ -> False
+{-# ANN test_SemigroupSimpleActionInstance "HLint: ignore Use camelCase" #-}
 
 test_optErrors :: [Test]
 test_optErrors = []
+{-# ANN test_optErrors "HLint: ignore Use camelCase" #-}
