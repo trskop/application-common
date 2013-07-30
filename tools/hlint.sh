@@ -6,7 +6,7 @@ if [ -t 1 ]; then
 fi
 
 DIRS=''
-for D in 'src' 'test' 'tests'; do
+for D in 'src' 'test' 'tests' 'examples/src'; do
     if [ -d "$D" ]; then
         if [ -z "$DIRS" ]; then
             DIRS="$D"
