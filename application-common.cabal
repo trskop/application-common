@@ -5,6 +5,7 @@ description:
   Abstract way of building applications that have multiple modes of operation
   and configuration passed on command line and/or using configuration files.
 homepage:               https://github.com/trskop/application-common
+bug-reports:            https://github.com/trskop/application-common/issues
 license:                BSD3
 license-file:           LICENSE
 author:                 Peter Trsko
